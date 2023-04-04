@@ -1,25 +1,28 @@
-gmodwars.util = gmodwars.util or {}
+local util = gmodwars.util or {}
 
-function gmodwars.util.Include(fileName, realm)
-	if not ( fileName ) then
-		error("[Gmod Wars] No file name specified for including.")
-	end
-	
-	if ( ( realm == "server" or fileName:find("sv_") ) and SERVER ) then
-		return include(fileName)
-	elseif ( realm == "shared" or fileName:find("shared.lua") or fileName:find("sh_")) then
-		if ( SERVER) then
-			AddCSLuaFile(fileName)
-		end
+function util.Include(fileName, realm)
+if not fileName then
+error("[Gmod Wars] No file name specified for including.")
+end
 
-		return include(fileName)
-	elseif ( realm == "client" or fileName:find("cl_") ) then
-		if ( SERVER ) then
-			AddCSLuaFile(fileName)
-		else
-			return include(fileName)
-		end
-	end
+lua
+Copy code
+if realm == "server" or fileName:find("sv_") then
+    if SERVER then
+        return include(fileName)
+    end
+elseif realm == "shared" or fileName:find("shared.lua") or fileName:find("sh_") then
+    if SERVER then
+        AddCSLuaFile(fileName)
+    end
+    return include(fileName)
+elseif realm == "client" or fileName:find("cl_") then
+    if SERVER then
+        AddCSLuaFile(fileName)
+    else
+        return include(fileName)
+    end
+end
 end
 
 function gmodwars.util.IncludeDirectory(directory, bFromLua)
